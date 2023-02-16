@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            background-color: #181b1d;
+            color:white;
+            font-family: Arial, Helvetica, sans-serif;
+            display: grid;
+            place-content: center;
+            text-align: center;
+        }
+        .comment-box {
+            border: solid 2px white;
+            width: fit-content;
+            width: 150px;
+            padding: 8px;
+            padding-inline: 100px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 10px;
+            margin-top:10px;
+            display:grid;
+            place-content: center;
+        }
+        .comment-box .posted_at {
+            color:grey;
+            font-size: 16px;
+        }
+        .comment-box .content {
+            font-size: 24px;
+            width: 150px;
+            word-wrap: break-word;
+        }
+        .commentPost input[type="text"] {
+            border:none;
+            outline:none;
+            padding: 8px;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        .commentPost input[type="submit"] {
+            padding-inline:16px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            font-size: 15px;
+        }
+        .comment-box .uuid {
+            font-size: 10px;
+            color:grey;
+        }
+        .alert {
+            display:none;
+        }
+        .alert.init {
+            position: fixed;
+            width: 100%;
+            left:0;
+            top:0;
+            background-color: red;
+            height: 4%;
+            display:grid;
+            place-content: center;
+            animation: appear .5s ease forwards;
+        }
+        .alert.uninit{
+            position: fixed;
+            width: 100%;
+            left:0;
+            top:0;
+            background-color: red;
+            height: 4%;
+            display:grid;
+            place-content: center;
+            animation: disappear .5s ease forwards;
+        }
+        @keyframes appear {
+            0%{
+                visibility: hidden;
+                opacity: 0;
+                height: 0;
+            }
+            100%{
+                visibility: visible;
+                opacity: 1;
+                height: 4%;
+            }
+        }
+        @keyframes disappear {
+            0%{
+                opacity: 1;
+                height: 4%;
+            }
+            80%{
+                height: 0;
+                visibility: hidden;
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        .del {
+            background-color: red;
+            color:white;
+            font-size:18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments</title>
+</head>
+<body>
+    <div class="alert">
+        <div class="message">Content required!</div>
+    </div>
+    <form method="post" action="/api/comment" class="commentPost">
+        <h1>Post a comment!</h1>
+        <input name="content" type="text" placeholder="Add some comment."><br><br>
+        <input type="submit" value="Post!">
+        <input name="author" type="text" value="guest" style="display:none;">
+    </form><br>
+    <% data.forEach(com => { %>
+        <div class="comment-box">
+            <form action="/api/comment/delete/<%= com.uuid %>" method="post"><input type="submit" class="del" value="Delete"></form>
+            <h1><%= com.author %></h1>
+            <span class="content"><%= com.content %></span><br>
+            <span class="uuid"><%= com.uuid %></span>
+        </div>
+    <% }) %>
+</body>
+<script>
+    function appear() {
+        document.querySelector(".alert").classList.add("init");
+        setTimeout(() => {
+            document.querySelector(".alert").classList.remove("init");
+            document.querySelector(".alert").classList.add("uninit");
+        }, 3000);
+    }
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    if(urlParams.has("fieldsRequired")) {
+        appear()
+    }
+</script>
+</html>
